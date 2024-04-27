@@ -6,6 +6,8 @@ import random
 
 #function to draw data, colors is a list that will be used to determine each bars color
 def draw(arr,colors):
+    print(arr)
+
     n = len(arr) #length of array, have 540x space to work with total
     horL = 540/n #length of each bar+space between next bar
     startx = 5  #starts at 5, allows 5 padding on the right
@@ -20,28 +22,34 @@ def draw(arr,colors):
     list = []
     for i, curr in enumerate(normalize): #curr represents the current content of normalize, being an integer
         y2 = 380-(300*curr) #height using pct rect height
-
-        print(str(i) + " " + colors[i])
-
         xWidth = horL * 2 / 3  # width of bar
         xSpace = horL * 1 / 3  # space between bars
-        recs = can.create_rectangle(xspace,y1,xspace+25,380-(300*curr),fill=colors[i]) #create(x1,y1,x2,x2,col)
+        recs = can.create_rectangle(startx,y1,startx+xWidth,380-(300*curr),fill=colors[i]) #create(x1,y1,x2,x2,col)
+            #startx marks where the rectangle will start bounded, x2 is then that + the width of each bar, y is measured by content of arr
 
 
         recIDS.append(recs) #rec is an integer, then is added to the list, recIDS
-        can.create_text(xspace+12.5,y2-15,text=arr[i],font=("Impact",20),fill="black"); #create_text(x,y,text,font=("",23),fill)
+        print(22-int(n/7))
+        can.create_text(startx+xWidth/2,y2-15,text=arr[i],font=("Impact",22-int(n/6)),fill="black"); #create_text(x,y,text,font=("",23),fill) - similar nature to createRect
 
-        startx += 50 #increment spacing for next rect
+        startx += horL #increment space by horL(space + width of bar)
     root.update_idletasks() #ensures canvas is updated
 
 def press():
-    bubSort(arr,draw,speed.get())
+    print(arr)
+    spd = 1/(6*speed.get())
+    bubSort(arr,draw,spd)
 
 def rand(length):
     arr = []
     for i in range(0,length):
         arr.append(random.randint(0,10))
     return arr
+
+def upSize(size):
+   global arr
+   arr = rand(size)
+   draw(arr,['black']*size)
 
 root = Tk()
 root.title("Bubble Sort Visualization")
@@ -60,9 +68,15 @@ frame = Frame(root,width=600,height=100,bg="white")
 frame.grid(row=10,column=0)
 
 #sliders in frame
-speed = Scale(frame,from_=.1,to=2,orient=HORIZONTAL,
+speed = Scale(frame,from_=.5,to=5,orient=HORIZONTAL,
              label="Speed", digits=2,resolution=.1) #size scaler
 speed.grid(row=0,column=0,pady=5)
+
+size = Scale(frame,from_=3,to=50,orient=HORIZONTAL,
+             label="Size")
+size.grid(row=0,column=1,pady=5,padx=15)
+size.bind("<ButtonRelease>", lambda value: upSize(size.get()))
+#size.config(command=lambda value: upSize(size.get()))
 
 #test button
 but = Button(frame,text = "sort", height=2, width=5, fg = 'white',bg = 'black',
