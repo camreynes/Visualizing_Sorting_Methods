@@ -1,6 +1,6 @@
 import time
 
-def bubSort(arr,draw,ids): #content,canvas,recIDS
+def bubSort(arr,draw,dur): #content,canvas,time interval
     fin = False
     while not fin:
         fin = True
@@ -15,7 +15,7 @@ def bubSort(arr,draw,ids): #content,canvas,recIDS
 
                 fin = False
 
-                time.sleep(.5)
+                time.sleep(float(dur))
             print("!")
 
 
