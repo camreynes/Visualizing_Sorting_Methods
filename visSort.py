@@ -1,15 +1,14 @@
 from tkinter import *
 from sort import *
 import random
-
-
 #program in tkinter to visualize bubble sort
 
-#function to draw data, colors is a list that will be used to determine each bars color
+#global variables
 recIDS = []  # list of rectangle ids, is appended after each rectangle is created, can.create returns rec ID
+
 def draw(arr,colors):
     #draws inside canvas function, bars based off arr, colors tell colors of bars
-    n = len(arr) #length of array, have 540x space to work with total
+    n = len(arr)
     horL = 540/n #length of each bar+space between next bar
     startx = 5  #starts at 5, allows 5 padding on the right
     y1 = 500  # guarentees rectangle fills beyond space
@@ -37,7 +36,7 @@ def press():
     #function for bubblesort
 
     spd = 1/(6*speed.get())
-    insSort(arr,draw,spd)
+    quickSort(arr,draw,spd)
     #bubSort(arr, draw, spd)
 
 def rand(length):
@@ -61,6 +60,7 @@ root.configure(background = "white")
 
 #main canvas
 arr = rand(10)
+arr = [4,7,6,8,9,0,1,3,2,5]
 can = Canvas(root, width=550, height=400, bg="gray92")
 can.grid(row=0,column=0,padx=25)
 draw(arr,['black']*10)
@@ -70,7 +70,7 @@ frame = Frame(root,width=600,height=100,bg="white")
 frame.grid(row=10,column=0)
 
 #sliders in frame
-speed = Scale(frame,from_=.5,to=5,orient=HORIZONTAL, #SPEED
+speed = Scale(frame,from_=.25,to=5,orient=HORIZONTAL, #SPEED
              label="Speed", digits=2,resolution=.1)
 speed.grid(row=0,column=0,pady=5)
 

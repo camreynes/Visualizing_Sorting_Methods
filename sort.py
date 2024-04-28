@@ -1,5 +1,58 @@
 import time
 
+
+
+def quickSort(arr,draw,spd):
+    spd *= 2
+    sort(arr,0,len(arr)-1,draw,spd)
+
+def sort(arr,lo,hi,draw,spd):
+    cols = ['black'] * len(arr)
+    for i in range(lo,hi+1):
+        cols[i] = 'dodger blue' #highlighting the range of bars being sorted
+    draw(arr,cols)
+    time.sleep(spd)
+    cols = ['black'] * len(arr)
+    draw(arr,cols) #flashes colors highlited, then resets to black
+    time.sleep(spd)
+
+    #quick sort, uses quickSort() as a helper method
+    if (lo < hi):
+        part = partition(arr,lo,hi,draw,spd)
+        sort(arr,lo,part-1,draw,spd)
+        sort(arr,part+1,hi,draw,spd)
+    print(arr)
+
+def partition(arr,low,high,draw,spd):
+    # partition method for quicksort
+    i = low - 1
+    pivot = arr[high]
+
+    for j in range(low,high):
+        cols = ['black'] * len(arr)
+        cols[high] = 'green2'  # comparing to pivot, so we highlight pivot as green2
+
+        # cols = ['black'] * len(arr)
+        for colIndex in range(i+1,j):
+            if i != -1:
+                cols[colIndex] = 'gray38' #if not getting compared, highlight grey
+
+        cols[j] = 'green2' #highlight bar being compared to pivot
+        draw(arr,cols)
+        time.sleep(spd)
+        if arr[j] < pivot:
+            i += 1
+            cols[i] = 'red' #highlight bars being swapped
+            cols[j] = 'red'
+            swap(i,j,arr)
+            draw(arr, cols)
+            time.sleep(spd)
+            cols = ['black'] * len(arr) #reset colors
+    swap(i+1,high,arr)
+    draw(arr, cols)
+    time.sleep(spd)
+    return i+1
+
 def insSort(arr,draw,spd):
     print(arr)
     for i in range(len(arr)):
@@ -24,7 +77,6 @@ def insSort(arr,draw,spd):
         swap(mindex, i,arr)
         time.sleep(spd)
 
-
 def bubSort(arr,draw,spd): #content,canvas,time interval
     n = len(arr)
     fin = False
@@ -40,7 +92,6 @@ def bubSort(arr,draw,spd): #content,canvas,time interval
                 draw(arr,cols)
                 fin = False
                 time.sleep(float(spd))
-            print("!")
 
 
 def swap(pos1,pos2,arr):
