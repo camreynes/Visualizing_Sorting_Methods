@@ -36,14 +36,14 @@ def press():
     #function for bubblesort
 
     spd = 1/(6*speed.get())
-    quickSort(arr,draw,spd)
+    insSort(arr,draw,spd)
     #bubSort(arr, draw, spd)
 
 def rand(length):
     #generates random arr of size length
     arr = []
     for i in range(0,length):
-        arr.append(random.randint(0,10))
+        arr.append(random.randint(0,100))
     return arr
 
 def upSize(size):

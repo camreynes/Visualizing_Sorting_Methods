@@ -1,3 +1,4 @@
+import copy
 import time
 
 
@@ -11,10 +12,10 @@ def sort(arr,lo,hi,draw,spd):
     for i in range(lo,hi+1):
         cols[i] = 'dodger blue' #highlighting the range of bars being sorted
     draw(arr,cols)
-    time.sleep(spd)
+    time.sleep(spd*2)
     cols = ['black'] * len(arr)
     draw(arr,cols) #flashes colors highlited, then resets to black
-    time.sleep(spd)
+    time.sleep(spd*2)
 
     #quick sort, uses quickSort() as a helper method
     if (lo < hi):
@@ -25,6 +26,9 @@ def sort(arr,lo,hi,draw,spd):
 
 def partition(arr,low,high,draw,spd):
     # partition method for quicksort
+    if (low >= high):
+        return low #early return
+
     i = low - 1
     pivot = arr[high]
 
@@ -54,6 +58,35 @@ def partition(arr,low,high,draw,spd):
     return i+1
 
 def insSort(arr,draw,spd):
+    for i in range(1,len(arr)):
+        cols = ['dodger blue' if k <= i-1 else 'black' for k in range(len(arr))] #highlights bars that are already sorted
+        j = i
+        cols[j] = 'green2' #highlight bar being compared
+
+        draw(arr,cols) #initial draw & reset
+        time.sleep(spd)
+
+        #visualizing insSort, we use a deepcopy so we can visualize the swap without a swap at each step
+            #we could visualize each swap, however, i believe this implementation is cleaner, albiet, less accurate
+        visIn = i
+        visNum = arr[j]
+        copyArr = copy.deepcopy(arr)
+        while(visIn-1 != -1 and visNum <= arr[visIn-1]): #
+            swap(visIn,visIn-1,copyArr)
+            visIn -= 1
+            cols[visIn] = 'gray38' if cols[visIn] != 'green2' else 'gray38' #gray bars until we reach the correct position
+            draw(arr,cols)
+            time.sleep(spd)
+        j = i #actual swapping
+        while (j - 1 != -1 and arr[j] <= arr[j - 1]):
+            swap(j,j-1,arr)
+            j -= 1
+        #vcisualized at the end
+        cols[j] = 'green2'
+        draw(arr, cols)
+        time.sleep(spd)
+
+def selSort(arr,draw,spd):
     print(arr)
     for i in range(len(arr)):
         cols = ['black'] * len(arr); #default color is black for all recs
@@ -83,15 +116,23 @@ def bubSort(arr,draw,spd): #content,canvas,time interval
     while not fin:
         fin = True
         for i in range(0, len(arr) - 1):
-            if (arr[i + 1] < arr[i]):  # determines whether to do ascending or descending sorting
-                cols = ['black'] * n #default bar color
-                cols[i],cols[i+1] = 'green2','green2' #highlights numbers beings swapped
+            cols = ['black'] * n  # default bar color
+            cols[i], cols[i + 1] = 'green2', 'green2'  # highlights bars being compared
+            draw(arr, cols)
 
-                #swaps and redraws
-                swap(i, i + 1,arr)
-                draw(arr,cols)
-                fin = False
+            if (arr[i + 1] < arr[i]):  # determines whether to do ascending or descending sorting
                 time.sleep(float(spd))
+                cols[i], cols[i + 1] = 'red', 'red' #highlights bars being swapped
+                # swaps and redraws
+                swap(i, i + 1, arr)
+                draw(arr, cols)
+
+
+
+                fin = False
+
+
+            time.sleep(float(spd))
 
 
 def swap(pos1,pos2,arr):
