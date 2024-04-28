@@ -1,30 +1,28 @@
 import time
 
-def insSort(arr,upCol,draw,spd,can):
+def insSort(arr,draw,spd):
     print(arr)
     for i in range(len(arr)):
-        time.sleep(.1)
-        can = draw(arr, ['black'] * len(arr))
+        cols = ['black'] * len(arr); #default color is black for all recs
+        cols[i] = 'cyan' #highlight current bar (i)
+
+        draw(arr, cols)
         minV = arr[i]
         mindex = i
 
-        for j in range(i, len(arr)):
+        for j in range(i+1, len(arr)):
             if (arr[j] < minV):
+                cols[mindex] = 'gray38' if cols[mindex] != 'cyan' else 'cyan'
+                    #if bar at mindex is not the ith bar (if it snot the cyan bar), then we change its color to grey
+                cols[j] = 'green2' #highlight bar being compared to minV
                 mindex = j
                 minV = arr[j]
+            else:
+                cols[j] = 'gray38' #if not being compared, then it is gray
+            time.sleep(spd)
+            draw(arr, cols)
         swap(mindex, i,arr)
-        print(arr,end=" ")
-        print(str(i) + " " + str(mindex))
-
-
-
-        time.sleep(.1)
-
-    for i in range(5):
-        upCol(i, 'green2', can)
-        time.sleep(.1)
-        can.update_idletasks()
-
+        time.sleep(spd)
 
 
 def bubSort(arr,draw,spd): #content,canvas,time interval

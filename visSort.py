@@ -32,13 +32,12 @@ def draw(arr,colors):
 
         startx += horL #increment space by horL(space + width of bar)
     can.update_idletasks() #ensures canvas is updated
-    return can
 
 def press():
     #function for bubblesort
 
     spd = 1/(6*speed.get())
-    insSort(arr,upCol,draw,spd,can)
+    insSort(arr,draw,spd)
     #bubSort(arr, draw, spd)
 
 def rand(length):
@@ -54,13 +53,8 @@ def upSize(size):
    arr = rand(size)
    draw(arr,['black']*size)
 
-def upCol(id,col,can):
-    #updates color of bar > id
-    print("AAAAA")
-    can.itemconfig(recIDS[id], fill=col)
-
 root = Tk()
-root.title("Bubble Sort Visualization")
+root.title("Sort Visualizer - @camreynes")
 root.geometry("600x550")
 root.configure(background = "white")
 #basic setup of Tk object
