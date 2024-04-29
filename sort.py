@@ -1,37 +1,42 @@
 import copy
 import time
 
+#global vars
+spd = 1
 
+def changeSpd(newSpd):
+    global spd
+    spd = newSpd
 
-def quickSort(arr,draw,spd):
-    spd *= 2
-    sort(arr,0,len(arr)-1,draw,spd)
+def quickSort(arr,draw):
+    global spd #only need this global within this method of QS
+    #spd /= 4
+    sort(arr,0,len(arr)-1,draw)
 
-def sort(arr,lo,hi,draw,spd):
+def sort(arr,lo,hi,draw):
     cols = ['black'] * len(arr)
     for i in range(lo,hi+1):
         cols[i] = 'dodger blue' #highlighting the range of bars being sorted
     draw(arr,cols)
-    time.sleep(spd*2)
+    time.sleep(spd)
     cols = ['black'] * len(arr)
     draw(arr,cols) #flashes colors highlited, then resets to black
-    time.sleep(spd*2)
+    time.sleep(spd)
 
     #quick sort, uses quickSort() as a helper method
     if (lo < hi):
-        part = partition(arr,lo,hi,draw,spd)
-        sort(arr,lo,part-1,draw,spd)
-        sort(arr,part+1,hi,draw,spd)
+        part = partition(arr,lo,hi,draw)
+        sort(arr,lo,part-1,draw)
+        sort(arr,part+1,hi,draw)
     print(arr)
 
-def partition(arr,low,high,draw,spd):
+def partition(arr,low,high,draw):
     # partition method for quicksort
-    if (low >= high):
+    if low >= high:
         return low #early return
 
     i = low - 1
     pivot = arr[high]
-
     for j in range(low,high):
         cols = ['black'] * len(arr)
         cols[high] = 'green2'  # comparing to pivot, so we highlight pivot as green2
@@ -53,19 +58,19 @@ def partition(arr,low,high,draw,spd):
             time.sleep(spd)
             cols = ['black'] * len(arr) #reset colors
     swap(i+1,high,arr)
-    draw(arr, cols)
+    draw(arr, cols) #cols will be defined, returned otherwise
     time.sleep(spd)
     return i+1
 
-def insSort(arr,draw,spd):
+def insSort(arr,draw):
+    global spd
+    print(spd)
     for i in range(1,len(arr)):
         cols = ['dodger blue' if k <= i-1 else 'black' for k in range(len(arr))] #highlights bars that are already sorted
         j = i
         cols[j] = 'green2' #highlight bar being compared
-
         draw(arr,cols) #initial draw & reset
         time.sleep(spd)
-
         #visualizing insSort, we use a deepcopy so we can visualize the swap without a swap at each step
             #we could visualize each swap, however, i believe this implementation is cleaner, albiet, less accurate
         visIn = i
@@ -86,16 +91,14 @@ def insSort(arr,draw,spd):
         draw(arr, cols)
         time.sleep(spd)
 
-def selSort(arr,draw,spd):
-    print(arr)
+def selSort(arr,draw):
+    global spd
     for i in range(len(arr)):
         cols = ['black'] * len(arr); #default color is black for all recs
         cols[i] = 'cyan' #highlight current bar (i)
-
         draw(arr, cols)
         minV = arr[i]
         mindex = i
-
         for j in range(i+1, len(arr)):
             if (arr[j] < minV):
                 cols[mindex] = 'gray38' if cols[mindex] != 'cyan' else 'cyan'
@@ -110,7 +113,8 @@ def selSort(arr,draw,spd):
         swap(mindex, i,arr)
         time.sleep(spd)
 
-def bubSort(arr,draw,spd): #content,canvas,time interval
+def bubSort(arr,draw): #content,canvas,time interval
+    global spd
     n = len(arr)
     fin = False
     while not fin:
@@ -119,21 +123,28 @@ def bubSort(arr,draw,spd): #content,canvas,time interval
             cols = ['black'] * n  # default bar color
             cols[i], cols[i + 1] = 'green2', 'green2'  # highlights bars being compared
             draw(arr, cols)
-
             if (arr[i + 1] < arr[i]):  # determines whether to do ascending or descending sorting
-                time.sleep(float(spd))
+                time.sleep(spd)
                 cols[i], cols[i + 1] = 'red', 'red' #highlights bars being swapped
                 # swaps and redraws
                 swap(i, i + 1, arr)
                 draw(arr, cols)
-
-
-
                 fin = False
-
-
             time.sleep(float(spd))
-
 
 def swap(pos1,pos2,arr):
     arr[pos1], arr[pos2] = arr[pos2], arr[pos1]
+
+
+
+
+#to be implemented
+def wait(spd):
+    # global pause
+    time.sleep(spd)
+    # while pause:
+    #     time.sleep(spd)
+
+def upPause():
+    global pause
+    pause = not pause
