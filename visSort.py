@@ -5,7 +5,10 @@ import random
 #program in tkinter to visualize bubble sort
 
 #global variables
-recIDS = []  # list of rectangle ids, is appended after each rectangle is created, can.create returns rec ID
+lowID = []  #ids from lower half of canvas
+upID = []  #ids from upper half of canvas
+
+merge = True #merge sort flag
 
 def draw(arr,colors):
     #draws inside canvas function, bars based off arr, colors tell colors of bars
@@ -14,31 +17,48 @@ def draw(arr,colors):
     startx = 5  #starts at 5, allows 5 padding on the right
     y1 = 500  # guarentees rectangle fills beyond space
 
-
+    arr = [0, 0, 2, 3, 4, 5, 6, 7, 8, 0]
     can.delete("all") #clears canvas
     normalize = [i/max(arr) for i in arr] #percentage of the bar that should be filled
 
 
     list = []
     for i, curr in enumerate(normalize): #curr represents the current content of normalize, being an integer
-        y2 = 380-(300*curr) #height using pct rect height
         xWidth = horL * 2 / 3  # width of bar
-        recs = can.create_rectangle(startx,y1,startx+xWidth,380-(300*curr),fill=colors[i]) #create(x1,y1,x2,x2,col)
+        height = 80+(300*(1-curr)) if not merge else 180+(200*(1-curr)) #changes height if mergesorting
+
+        recs = can.create_rectangle(startx,y1,startx+xWidth,height,fill=colors[i]) #create(x1,y1,x2,x2,col)
             #startx marks where the rectangle will start bounded, x2 is then that + the width of each bar, y is measured by content of arr
-
-        recIDS.append(recs) #rec is an integer, then is added to the list, recIDS
-        can.create_text(startx+xWidth/2,y2-15,text=arr[i],font=("Impact",22-int(n/6)),fill="black"); #create_text(x,y,text,font=("",23),fill) - similar nature to createRect
-
+        can.create_text(startx+xWidth/2,height-15,text=arr[i],font=("Impact",22-int(n/6)),fill="black"); #create_text(x,y,text,font=("",23),fill) - similar nature to createRect
         startx += horL #increment space by horL(space + width of bar)
+        texts = can.create_line(0,150,560,150,fill="black") if merge else None #create a line if merging
+        list.append(recs)
+        list.append(texts) #now we can wipe only the 'bottom' half of the canvas
     can.update_idletasks() #ensures canvas is updated
+    draw2(arr,colors)
 
-def press():
-    #function for bubblesort
-    upSpeed(1 / (4 * speed.get()))
-    bubSort(arr, draw)
+def draw2(arr,colors): #note this arr is not the sorting array, rather from mergeSort
+    n = len(arr)
+    horL = 540 / n
+    startx = 5
+    arr = [0, 0, 2, 3, 4, 5, 6, 7, 8, 0]
+    can.delete("all")
+    normalize = [i / max(arr) for i in arr]
 
-    #quickSort(arr,draw)
-    #selSort(arr, draw)
+    list = []
+    for i, curr in enumerate(normalize):
+        xWidth = horL * 2 / 3
+        height = 50 + (80 * (1 - curr))
+
+        recs = can.create_rectangle(startx, 150, startx + xWidth, height, fill=colors[i])  # create(x1,y1,x2,x2,col)
+        # startx marks where the rectangle will start bounded, x2 is then that + the width of each bar, y is measured by content of arr
+        #recIDS.append(recs)  # rec is an integer, then is added to the list, recIDS
+        #can.create_text(startx + xWidth / 2, height - 15, text=arr[i], font=("Impact", 22 - int(n / 6)),
+                        #fill="black");  # create_text(x,y,text,font=("",23),fill) - similar nature to createRect
+        startx += horL  # increment space by horL(space + width of bar)
+        can.create_line(startx, 500, startx, 1000, fill="black") if not merge else None  # create a line if merging
+    can.update_idletasks()  # ensures canvas is updated
+    can.update_idletasks()
 
 def rand(length):
     #generates random arr of size length
@@ -93,7 +113,7 @@ size.grid(row=0,column=1,pady=5)
 size.bind("<ButtonRelease>", lambda value: upSize(size.get()))
 
 #default values sliders
-speed.set(10)
+speed.set(1)
 size.set(10)
 
 
@@ -104,20 +124,24 @@ bbg = 'blanched almond'
 
 #Buttons
 bsBut = Button(bFrame,text = "Bubble", height=2, width=bWidth, fg = bfg,bg = bbg,
-                command = lambda: (bubSort(arr,draw),press()))
+                command = lambda: (bubSort(arr,draw)))
 bsBut.grid(row=10,column=0,padx=0,pady=10)
 
 insBut = Button(bFrame,text = "Insertion", height=2, width=bWidth, fg = bfg,bg = bbg,
-                command = lambda: (insSort(arr,draw),press()))
+                command = lambda: (insSort(arr,draw)))
 insBut.grid(row=10,column=1,padx=0,pady=10)
 
 selBut = Button(bFrame,text = "Selection", height=2, width=bWidth, fg = bfg,bg = bbg,
-                command = lambda: (selSort(arr,draw),press()))
+                command = lambda: (selSort(arr,draw)))
 selBut.grid(row=10,column=2,padx=0,pady=10)
 
 quickBut = Button(bFrame,text = "Quick", height=2, width=bWidth, fg = bfg,bg = bbg,
-                command = lambda: (quickSort(arr,draw),press()))
+                command = lambda: (quickSortHelper(arr,draw)))
 quickBut.grid(row=11,column=0,padx=0,pady=10)
+
+mergeBut = Button(bFrame,text = "Merge", height=2, width=bWidth, fg = bfg,bg = bbg,
+                command = lambda: (mergeSortHelper(arr,draw,draw2)))
+mergeBut.grid(row=11,column=1,padx=0,pady=10)
 
 #i dont know how this is going to work, possible multithreading? yikerones
 pause = Button(bFrame,text = "Pause", height=2, width=bWidth, fg = bfg,bg = bbg,

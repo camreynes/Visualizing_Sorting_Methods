@@ -4,16 +4,69 @@ import time
 #global vars
 spd = 1
 
-def changeSpd(newSpd):
-    global spd
-    spd = newSpd
+def mergeSortHelper(arr,draw,draw2):
+    mergeSort(arr,0,len(arr)-1,draw,draw2)
+def mergeSort(arr,lo,hi,draw,draw2):
+    if lo < hi:
+        #first portion displays the range of bars being split up/merged
+        draw(arr,['black' for x in range(len(arr))]) #reset colors
+        time.sleep(spd)
+        draw(arr,['dodger blue' if x >= lo and x <= hi else 'black' for x in range(len(arr))]) #highlight range of bars being sorted
+        time.sleep(spd)
 
-def quickSort(arr,draw):
+        mid = lo+(hi-lo) // 2 #good practice
+        mergeSort(arr,lo,mid,draw,draw2)
+        mergeSort(arr,mid+1,hi,draw,draw2)
+        merge(arr,lo,mid,hi,draw,draw2)
+
+def merge(arr,lo,mid,hi,draw,draw2):
+    cols = ['gold' if x >= lo and x <= hi else 'black' for x in range(len(arr))]
+    draw(arr,cols)
+    time.sleep(spd)
+    draw2(arr,cols)
+    time.sleep(spd)
+
+
+    #merge method for mergeSort
+    left = arr[lo:mid+1]
+    right = arr[mid+1:hi+1] #slicing exclusive
+    i,j = 0,0
+    k = lo
+    while i < len(left) and j < len(right):
+        #compare put into left or right
+        if left[i] < right[j]:
+            arr[k] = left[i]
+            disChange(k, cols, arr, draw)
+            i += 1
+        else:
+            arr[k] = right[j]
+            disChange(k, cols, arr, draw)
+            j += 1
+        k += 1
+    #dump rest of calues
+    while i < len(left):
+        arr[k] = left[i]
+        disChange(k, cols, arr, draw)
+        i += 1
+        k += 1
+    while j < len(right):
+        arr[k] = right[j]
+        disChange(k, cols, arr, draw)
+        j += 1
+        k += 1
+
+def disChange(i,cols,arr,draw):
+    cols[i] = 'red'
+    draw(arr,cols)
+    time.sleep(spd)
+    cols[i] = 'black'
+
+def quickSortHelper(arr,draw):
     global spd #only need this global within this method of QS
     #spd /= 4
-    sort(arr,0,len(arr)-1,draw)
+    quickSort(arr,0,len(arr)-1,draw)
 
-def sort(arr,lo,hi,draw):
+def quickSort(arr,lo,hi,draw):
     cols = ['black'] * len(arr)
     for i in range(lo,hi+1):
         cols[i] = 'dodger blue' #highlighting the range of bars being sorted
@@ -26,8 +79,8 @@ def sort(arr,lo,hi,draw):
     #quick sort, uses quickSort() as a helper method
     if (lo < hi):
         part = partition(arr,lo,hi,draw)
-        sort(arr,lo,part-1,draw)
-        sort(arr,part+1,hi,draw)
+        quickSort(arr,lo,part-1,draw)
+        quickSort(arr,part+1,hi,draw)
     print(arr)
 
 def partition(arr,low,high,draw):
@@ -136,6 +189,9 @@ def swap(pos1,pos2,arr):
     arr[pos1], arr[pos2] = arr[pos2], arr[pos1]
 
 
+def changeSpd(newSpd):
+    global spd
+    spd = newSpd
 
 
 #to be implemented
