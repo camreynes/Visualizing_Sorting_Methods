@@ -105,6 +105,37 @@ def quickSort(arr,lo,hi,draw):
         quickSort(arr,part+1,hi,draw)
     print(arr)
 
+def shellSort(arr,draw):
+    # code here
+    n = len(arr)
+    gap = n // 2
+
+    while gap > 0:
+        j = gap
+        while n > j: #make sure we are not out of bounds
+            i = j - gap
+            while i >= 0: #compare, break early if already 'sorted'
+                cols = ['black' for x in range(len(arr))]  # default color
+                cols[i], cols[i + gap] = 'green2', 'green2'  # highlights bars being compared
+                draw(arr, cols)
+                time.sleep(spd)
+
+                if arr[i] < arr[i + gap]:
+                    break
+                else:
+                    swap(i+gap,i,arr)
+                    cols[i], cols[i + gap] = 'red', 'red'  # highlights bars being swapped
+                    draw(arr, cols)
+                    time.sleep(spd)
+
+                i = i - gap #decrement
+            j += 1
+        gap = gap // 2
+
+    cols = ['black' for x in range(len(arr))]  # default color
+    time.sleep(spd)
+    draw(arr, cols)  # reset colors
+
 def partition(arr,low,high,draw):
     # partition method for quicksort
     if low >= high:
@@ -166,6 +197,10 @@ def insSort(arr,draw):
         draw(arr, cols)
         time.sleep(spd)
 
+    cols = ['black' for x in range(len(arr))]  # default color
+    time.sleep(spd)
+    draw(arr, cols)  # reset colors
+
 def selSort(arr,draw):
     global spd
     for i in range(len(arr)):
@@ -188,6 +223,10 @@ def selSort(arr,draw):
         swap(mindex, i,arr)
         time.sleep(spd)
 
+    cols = ['black' for x in range(len(arr))]  # default color
+    time.sleep(spd)
+    draw(arr, cols)  # reset colors
+
 def bubSort(arr,draw): #content,canvas,time interval
     global spd
     n = len(arr)
@@ -206,6 +245,10 @@ def bubSort(arr,draw): #content,canvas,time interval
                 draw(arr, cols)
                 fin = False
             time.sleep(float(spd))
+
+    cols = ['black' for x in range(len(arr))]  # default color
+    time.sleep(spd)
+    draw(arr, cols)  # reset colors
 
 def swap(pos1,pos2,arr):
     arr[pos1], arr[pos2] = arr[pos2], arr[pos1]
