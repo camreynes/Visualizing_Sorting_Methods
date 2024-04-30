@@ -2,10 +2,17 @@ import copy
 import time
 
 #global vars
-spd = 1
+spd = 1/10
 
-def mergeSortHelper(arr,draw,draw2):
+def mergeSortHelper(arr,draw,draw2,upMerge):
+    upMerge(1)
     mergeSort(arr,0,len(arr)-1,draw,draw2)
+    upMerge(0) #turns off merge slice
+    time.sleep(spd*2)
+    draw(arr,['black' for x in range(len(arr))]) #reset colors
+
+
+    draw(arr,['black' for x in range(len(arr))]) #reset colors
 def mergeSort(arr,lo,hi,draw,draw2):
     if lo < hi:
         #first portion displays the range of bars being split up/merged
@@ -20,46 +27,61 @@ def mergeSort(arr,lo,hi,draw,draw2):
         merge(arr,lo,mid,hi,draw,draw2)
 
 def merge(arr,lo,mid,hi,draw,draw2):
-    cols = ['gold' if x >= lo and x <= hi else 'black' for x in range(len(arr))]
-    draw(arr,cols)
-    time.sleep(spd)
-    draw2(arr,cols)
-    time.sleep(spd)
-
+    cols1 = ['black' if x >= lo and x <= hi else 'black' for x in range(len(arr))] #highlighting the range of bars being merged
 
     #merge method for mergeSort
-    left = arr[lo:mid+1]
-    right = arr[mid+1:hi+1] #slicing exclusive
-    i,j = 0,0
-    k = lo
-    while i < len(left) and j < len(right):
-        #compare put into left or right
-        if left[i] < right[j]:
-            arr[k] = left[i]
-            disChange(k, cols, arr, draw)
-            i += 1
-        else:
-            arr[k] = right[j]
-            disChange(k, cols, arr, draw)
-            j += 1
-        k += 1
-    #dump rest of calues
-    while i < len(left):
-        arr[k] = left[i]
-        disChange(k, cols, arr, draw)
-        i += 1
-        k += 1
-    while j < len(right):
-        arr[k] = right[j]
-        disChange(k, cols, arr, draw)
-        j += 1
-        k += 1
+    a = arr[lo:mid+1]
+    b = arr[mid+1:hi+1] #slicing exclusive
 
-def disChange(i,cols,arr,draw):
-    cols[i] = 'red'
-    draw(arr,cols)
+    arr2 = [None] * len(arr)
+    arr2[lo:hi+1] = arr[lo:hi+1]
+
+    cols2 = ['maroon1' if x >= lo and x <= mid else 'gold2' if x >= mid+1 and x <= hi else 'None' for x in range(len(arr))]
+
+    draw(arr,cols1)
+    draw2(arr2,cols2,lo)
+    time.sleep(spd) #initial draw and sleep
+
+    aI,bI = 0,0 #left and right arrays
+    cI = lo
+    while aI < len(a) and bI < len(b):
+        #compare put into left or right
+        if a[aI] <= b[bI]: #if left is smaller, put in left
+            arr[cI] = a[aI]
+            disChange(arr, arr2, draw, draw2, cols1, cols2, lo + aI, cI)
+            aI += 1
+        else:
+            arr[cI] = b[bI]
+            disChange(arr, arr2, draw, draw2, cols1, cols2, lo + bI + len(a), cI)
+            bI += 1
+        cI += 1
+    #dump rest of calues
+    while aI < len(a):
+        arr[cI] = a[aI]
+        disChange(arr, arr2, draw, draw2, cols1, cols2, lo + aI, cI)
+        aI += 1
+        cI += 1
+    while bI < len(b):
+        arr[cI] = b[bI]
+        disChange(arr, arr2, draw, draw2, cols1, cols2, lo + bI + len(a), cI)
+        bI += 1
+        cI += 1
+    draw2(None,None,None) #wipe the second canvas
+
+def disChange(arr,arr2,draw,draw2,cols1,cols2,offset,cI):
+    #displays the change in arr and arr2, offset is where we should represesnt color in arr2
+        #i is aI or bI
+    cols2[offset] = 'red1'  # bar in arr2 that is being compared to a[aI]
+    cols1[cI] = 'red1'
+    draw(arr, cols1)
+    draw2(arr2, cols2, offset)
     time.sleep(spd)
-    cols[i] = 'black'
+        #we are 'done' with these colors
+    cols2[offset] = 'gray38'  # bar in arr2 that is being compared to a[aI]
+    cols1[cI] = 'gray38'
+    draw(arr, cols1)
+    draw2(arr2, cols2, offset)
+    time.sleep(spd)
 
 def quickSortHelper(arr,draw):
     global spd #only need this global within this method of QS
