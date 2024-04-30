@@ -1,19 +1,9 @@
 import copy
-import threading
 import time
-pause = False
 
 #global vars
 spd = 1/10
 
-def thread(function):
-    def wrapper(*args,**kwargs):
-        thread = threading.Thread(target=function,args=args,kwargs=kwargs)
-        thread.start()
-        return thread
-    return wrapper
-
-@thread
 def mergeSortHelper(arr,draw,draw2,upMerge):
     upMerge(1)
     mergeSort(arr,0,len(arr)-1,draw,draw2)
@@ -35,6 +25,7 @@ def mergeSort(arr,lo,hi,draw,draw2):
         mergeSort(arr,lo,mid,draw,draw2)
         mergeSort(arr,mid+1,hi,draw,draw2)
         merge(arr,lo,mid,hi,draw,draw2)
+
 def merge(arr,lo,mid,hi,draw,draw2):
     cols1 = ['black' if x >= lo and x <= hi else 'black' for x in range(len(arr))] #highlighting the range of bars being merged
 
@@ -76,6 +67,7 @@ def merge(arr,lo,mid,hi,draw,draw2):
         bI += 1
         cI += 1
     draw2(None,None,None) #wipe the second canvas
+
 def disChange(arr,arr2,draw,draw2,cols1,cols2,offset,cI):
     #displays the change in arr and arr2, offset is where we should represesnt color in arr2
         #i is aI or bI
@@ -91,7 +83,6 @@ def disChange(arr,arr2,draw,draw2,cols1,cols2,offset,cI):
     draw2(arr2, cols2, offset)
     time.sleep(spd)
 
-@thread
 def quickSortHelper(arr,draw):
     global spd #only need this global within this method of QS
     #spd /= 4
@@ -113,6 +104,37 @@ def quickSort(arr,lo,hi,draw):
         quickSort(arr,lo,part-1,draw)
         quickSort(arr,part+1,hi,draw)
     print(arr)
+
+def shellSort(arr,draw):
+    # code here
+    n = len(arr)
+    gap = n // 2
+
+    while gap > 0:
+        j = gap
+        while n > j: #make sure we are not out of bounds
+            i = j - gap
+            while i >= 0: #compare, break early if already 'sorted'
+                cols = ['black' for x in range(len(arr))]  # default color
+                cols[i], cols[i + gap] = 'green2', 'green2'  # highlights bars being compared
+                draw(arr, cols)
+                time.sleep(spd)
+
+                if arr[i] < arr[i + gap]:
+                    break
+                else:
+                    swap(i+gap,i,arr)
+                    cols[i], cols[i + gap] = 'red', 'red'  # highlights bars being swapped
+                    draw(arr, cols)
+                    time.sleep(spd)
+
+                i = i - gap #decrement
+            j += 1
+        gap = gap // 2
+
+    cols = ['black' for x in range(len(arr))]  # default color
+    time.sleep(spd)
+    draw(arr, cols)  # reset colors
 
 def partition(arr,low,high,draw):
     # partition method for quicksort
@@ -146,39 +168,6 @@ def partition(arr,low,high,draw):
     time.sleep(spd)
     return i+1
 
-@thread
-def shellSort(arr,draw):
-    # code here
-    n = len(arr)
-    gap = n // 2
-
-    while gap > 0:
-        j = gap
-        while n > j: #make sure we are not out of bounds
-            i = j - gap
-            while i >= 0: #compare, break early if already 'sorted'
-                cols = ['black' for x in range(len(arr))]  # default color
-                cols[i], cols[i + gap] = 'green2', 'green2'  # highlights bars being compared
-                draw(arr, cols)
-                time.sleep(spd)
-
-                if arr[i] < arr[i + gap]:
-                    break
-                else:
-                    swap(i+gap,i,arr)
-                    cols[i], cols[i + gap] = 'red', 'red'  # highlights bars being swapped
-                    draw(arr, cols)
-                    time.sleep(spd)
-
-                i = i - gap #decrement
-            j += 1
-        gap = gap // 2
-
-    cols = ['black' for x in range(len(arr))]  # default color
-    time.sleep(spd)
-    draw(arr, cols)  # reset colors
-
-@thread
 def insSort(arr,draw):
     global spd
     print(spd)
@@ -212,7 +201,6 @@ def insSort(arr,draw):
     time.sleep(spd)
     draw(arr, cols)  # reset colors
 
-@thread
 def selSort(arr,draw):
     global spd
     for i in range(len(arr)):
@@ -239,7 +227,6 @@ def selSort(arr,draw):
     time.sleep(spd)
     draw(arr, cols)  # reset colors
 
-@thread
 def bubSort(arr,draw): #content,canvas,time interval
     global spd
     n = len(arr)
@@ -251,16 +238,16 @@ def bubSort(arr,draw): #content,canvas,time interval
             cols[i], cols[i + 1] = 'green2', 'green2'  # highlights bars being compared
             draw(arr, cols)
             if (arr[i + 1] < arr[i]):  # determines whether to do ascending or descending sorting
-                wait(float(spd))
+                time.sleep(spd)
                 cols[i], cols[i + 1] = 'red', 'red' #highlights bars being swapped
                 # swaps and redraws
                 swap(i, i + 1, arr)
                 draw(arr, cols)
                 fin = False
-            wait(float(spd))
+            time.sleep(float(spd))
 
     cols = ['black' for x in range(len(arr))]  # default color
-    wait(float(spd))
+    time.sleep(spd)
     draw(arr, cols)  # reset colors
 
 def swap(pos1,pos2,arr):
@@ -274,14 +261,11 @@ def changeSpd(newSpd):
 
 #to be implemented
 def wait(spd):
-    global pause
-    print("called")
+    # global pause
     time.sleep(spd)
-    while pause:
-        print("paused")
-        time.sleep(spd)
+    # while pause:
+    #     time.sleep(spd)
 
 def upPause():
-    print("PAQUUUUUUUSE")
     global pause
     pause = not pause

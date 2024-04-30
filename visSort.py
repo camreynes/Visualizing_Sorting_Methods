@@ -1,7 +1,6 @@
 from tkinter import *
 from sort import *
 import random
-import threading
 
 #program in tkinter to visualize bubble sort
 
@@ -234,8 +233,10 @@ shellBut.grid(row=11,column=2,padx=0,pady=10)
 
 #i dont know how this is going to work, possible multithreading? yikerones
 pause = Button(bFrame,text = "Pause", height=2, width=bWidth, fg = bfg,bg = bbg,
-             command = lambda: print("pause"))
-pause.grid(row=10,column=5,padx=(5,5),pady=10)
+             command = lambda: upPause)
+pause.grid(row=10,column=5,padx=(5,20),pady=10)
+randomize = Button(bFrame,text = "Randomize", height=2, width=bWidth, fg = bfg,bg = bbg,
+                command = lambda: upSize(size.get()))
+randomize.grid(row=11,column=5,padx=(5,20),pady=10)
 
-thread = threading.Thread(target=root.mainloop())
-thread.start()
+root.mainloop()
