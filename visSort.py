@@ -14,15 +14,14 @@ def draw(arr,colors):
     global lowIDs
     #draws inside canvas function, bars based off arr, colors tell colors of bars
     n = len(arr)
-    horL = 540/n #length of each bar+space between next bar
-    startx = 5  #starts at 5, allows 5 padding on the right
+    horL = 560/n #length of each bar+space between next bar
+    startx = 1/6 * horL  #starting x value
     y1 = 500  # guarentees rectangle fills beyond space
 
     can.delete(*lowIDs) #clears canvas
+    lowIDs = []  # clears lowIDs
     normalize = [i/max(arr) for i in arr] #percentage of the bar that should be filled
 
-
-    list = []
     for i, curr in enumerate(normalize): #curr represents the current content of normalize, being an integer
         xWidth = horL * 2 / 3  # width of bar
         height = 80+(300*(1-curr)) if not merge else 180+(200*(1-curr)) #changes height if mergesorting
@@ -30,38 +29,36 @@ def draw(arr,colors):
 
         recs = can.create_rectangle(startx,y1,startx+xWidth,height,fill=colors[i]) #create(x1,y1,x2,x2,col)
         #startx marks where the rectangle will start bounded, x2 is then that + the width of each bar, y is measured by content of arr
-        texts = can.create_text(startx+xWidth/2,height-15,text=arr[i],font=("Impact",22-int(n/6)),fill="black"); #create_text(x,y,text,font=("",23),fill) - similar nature to createRect
+        #print(str(arr[i]) + " " + str(len(str(arr[i]))))
 
-        lowIDs.append(can.create_line(0,150,560,150,fill="black") if merge else None) #create a line if merging and appending
+        fontSize = (22 - int(n/6))
+        if (len(str(arr[i])) == 2):
+            fontSize = int(fontSize // 1.3)
+        if (len(str(arr[i])) == 3):
+            fontSize = int(fontSize // 1.5)
+        texts = can.create_text(startx+xWidth/2,height-15,text=arr[i], font=("Impact", fontSize),
+                                fill="black")
+
+        if merge:
+            lowIDs.append(can.create_line(0,150,560,150,fill="black")) #create a line if merging and appending
         lowIDs.append(recs)
         lowIDs.append(texts) #now we can wipe only the 'bottom' half of the canvas
-        j=0
-        for i in lowIDs:
-           j+=1
-        print(j)
-
 
         startx += horL  # increment space by horL(space + width of bar)
     can.update_idletasks() #ensures canvas is updated
-    lowIDs = [] #clears lowIDs
-
 
 def draw2(arr,colors,val): #note this arr is not the sorting array, rather from mergeSort
+    global upIDs
     if arr is None:
         can.delete(*upIDs)
         return
     n = len(arr)
-    print("size" + str(n))
-    horL = 540 / n
-    startx = 5
+    horL = 560 / n
+    startx = 1/6 * horL
     can.delete(*upIDs)
+    upIDs = []
 
-    print(str(val) + " VALLLVALVALVALV")
-
-    print(arr)
     maxV = max(i for i in arr if i is not None) #maxValue
-
-
     normalize = [] #we have to do normalize differently for merge sort as we have 'None' values
     for i in range(0, len(arr)):
         if (arr[i] != None):
@@ -71,14 +68,18 @@ def draw2(arr,colors,val): #note this arr is not the sorting array, rather from 
             normalize.append(None)
     print(normalize)
 
-
     #similar to draw1, but we have to account for 'None' values
     for i, curr in enumerate(normalize):
         if (arr[i] != None):  # only make bar if there is content
             xWidth = horL * 2 / 3
             height = 50 + (80 * (1 - curr))
             recs = can.create_rectangle(startx, 150, startx + xWidth, height, fill=colors[i])  # create(x1,y1,x2,x2,col)
-            texts = can.create_text(startx + xWidth / 2, height - 15, text=arr[i], font=("Impact", 22 - int(n / 6)),
+            fontSize = (22 - int(n / 6))
+            if (len(str(arr[i])) == 2):
+                fontSize = int(fontSize // 1.3)
+            if (len(str(arr[i])) == 3):
+                fontSize = int(fontSize // 1.5)
+            texts = can.create_text(startx + xWidth / 2, height - 15, text=arr[i], font=("Impact", fontSize),
                                 fill="black")
             upIDs.append(texts)  # now we can wipe only the 'bottom' half of the canvas
             upIDs.append(recs)
@@ -91,7 +92,7 @@ def rand(length):
     #generates random arr of size length
     arr = []
     for i in range(0,length):
-        arr.append(random.randint(0,10))
+        arr.append(random.randint(0,100))
     return arr
 
 def upSize(size):
