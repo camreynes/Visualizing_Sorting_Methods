@@ -10,7 +10,7 @@ def mergeSortHelper(arr,draw,draw2,upMerge):
     upMerge(0) #turns off merge slice
     time.sleep(spd*2)
     draw(arr,['black' for x in range(len(arr))]) #reset colors
-
+    #got back from school, lazy commit
 
     draw(arr,['black' for x in range(len(arr))]) #reset colors
 def mergeSort(arr,lo,hi,draw,draw2):
